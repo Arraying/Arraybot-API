@@ -13,12 +13,18 @@ type Endpoint struct {
 }
 
 const (
-	apiBase      = "/api/"
+	apiBase      = "/"
 	languageBase = "languages/"
 )
 
 // Endpoints is a collection of all endpoints.
 var Endpoints = []Endpoint{
+	Endpoint{
+		Name:    "Index",
+		Method:  "GET",
+		Pattern: apiBase,
+		Handler: Index,
+	},
 	Endpoint{
 		Name:    "Get Languages",
 		Method:  "GET",

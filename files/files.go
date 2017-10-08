@@ -1,8 +1,10 @@
 package files
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"os"
 	"regexp"
 )
@@ -56,7 +58,26 @@ func IsLanguage(language string) bool {
 	return false
 }
 
+// IsValidToken checks if the provided token is valid.
+func IsValidToken(language, token string) bool {
+	for _, entry := range Configuration.Languages {
+		if entry.Language == language {
+			for _, languageToken := range entry.Tokens {
+				if token == languageToken {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
 // FormatJSON formats all JSON and removes excessive whitespace.
-func FormatJSON(input string) string {
-	return regex.ReplaceAllString(input, "")
+func FormatJSON(input []byte) string {
+	buffer := new(bytes.Buffer)
+	err := json.Compact(buffer, input)
+	if err != nil {
+		log.Fatalln("Error compacting JSON,", err)
+	}
+	return buffer.String()
 }

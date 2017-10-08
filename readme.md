@@ -1,3 +1,3 @@
 # Arraybot API
 
-This is a WIP repository for the Arraybot API that will be handling languages primarily, likely other things too.
+The Arraybot API handles languages using REST. The API is meant to be used internally.

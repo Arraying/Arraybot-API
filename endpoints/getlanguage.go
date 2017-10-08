@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -15,39 +14,32 @@ import (
 func GetLanguage(writer http.ResponseWriter, request *http.Request) {
 	writer = setContent(writer)
 	language := mux.Vars(request)["language"]
-	var response RegularResponse
 	if !files.IsLanguage(language) {
-		writer.WriteHeader(http.StatusBadRequest)
-		response = RegularResponse{
+		respond(writer, http.StatusBadRequest, RegularResponse{
 			Success: false,
 			Message: "Language does not exist",
-		}
-	} else {
-		raw := files.GetLanguageName()
-		name := strings.Replace(raw, "{language}", language, -1)
-		if !files.DoesFileExist(name, false) {
-			writer.WriteHeader(http.StatusInternalServerError)
-			response = RegularResponse{
-				Success: false,
-				Message: "Language file does not exist",
-			}
-		} else {
-			content, err := ioutil.ReadFile(name)
-			if err != nil {
-				writer.WriteHeader(http.StatusInternalServerError)
-				response = RegularResponse{
-					Success: false,
-					Message: "Could not read language",
-				}
-			} else {
-				response = RegularResponse{
-					Success: true,
-					Message: files.FormatJSON(string(content)),
-				}
-			}
-		}
+		})
+		return
 	}
-	if err := json.NewEncoder(writer).Encode(response); err != nil {
-		panic(err)
+	raw := files.GetLanguageName()
+	name := strings.Replace(raw, "{language}", language, -1)
+	if !files.DoesFileExist(name, false) {
+		respond(writer, http.StatusInternalServerError, RegularResponse{
+			Success: false,
+			Message: "Language file does not exist",
+		})
+		return
 	}
+	content, err := ioutil.ReadFile(name)
+	if err != nil {
+		respond(writer, http.StatusInternalServerError, RegularResponse{
+			Success: false,
+			Message: "Could not read language",
+		})
+		return
+	}
+	respond(writer, http.StatusOK, RegularResponse{
+		Success: true,
+		Message: files.FormatJSON(content),
+	})
 }
