@@ -6,13 +6,18 @@ import (
 	"strings"
 
 	"github.com/arraying/Arraybot-API/files"
-
+	"github.com/arraying/Arraybot-API/ratelimits"
 	"github.com/gorilla/mux"
 )
 
 // GetLanguage handles the GET request for the endpoint.
 func GetLanguage(writer http.ResponseWriter, request *http.Request) {
 	writer = setContent(writer)
+	if ratelimit, exists := ratelimits.Ratelimits[files.APIGetLanguage]; exists {
+		if ratelimited := ratelimit.Handle(writer, request); ratelimited {
+			return
+		}
+	}
 	language := mux.Vars(request)["language"]
 	if !files.IsLanguage(language) {
 		respond(writer, http.StatusBadRequest, RegularResponse{

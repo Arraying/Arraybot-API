@@ -3,6 +3,7 @@ package endpoints
 import (
 	//"encoding/json"
 	"github.com/arraying/Arraybot-API/files"
+	"github.com/arraying/Arraybot-API/ratelimits"
 	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
@@ -12,6 +13,11 @@ import (
 // PatchLanguage handles the PATCH request for the endpoint.
 func PatchLanguage(writer http.ResponseWriter, request *http.Request) {
 	writer = setContent(writer)
+	if ratelimit, exists := ratelimits.Ratelimits[files.APIPatchLanguage]; exists {
+		if ratelimited := ratelimit.Handle(writer, request); ratelimited {
+			return
+		}
+	}
 	language := mux.Vars(request)["language"]
 	if !files.IsLanguage(language) {
 		respond(writer, http.StatusBadRequest, RegularResponse{

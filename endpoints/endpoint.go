@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"github.com/arraying/Arraybot-API/files"
 	"net/http"
 )
 
@@ -12,35 +13,30 @@ type Endpoint struct {
 	Handler http.HandlerFunc
 }
 
-const (
-	apiBase      = "/"
-	languageBase = "languages/"
-)
-
 // Endpoints is a collection of all endpoints.
 var Endpoints = []Endpoint{
 	Endpoint{
-		Name:    "Index",
+		Name:    files.APIIndex,
 		Method:  "GET",
-		Pattern: apiBase,
+		Pattern: files.APIBase,
 		Handler: Index,
 	},
 	Endpoint{
-		Name:    "Get Languages",
+		Name:    files.APIGetLanguages,
 		Method:  "GET",
-		Pattern: apiBase + languageBase,
+		Pattern: files.APIBase + files.LanguageBase,
 		Handler: GetLanguages,
 	},
 	Endpoint{
-		Name:    "Get Language",
+		Name:    files.APIGetLanguage,
 		Method:  "GET",
-		Pattern: apiBase + languageBase + "{language}",
+		Pattern: files.APIBase + files.LanguageBase + "{language}",
 		Handler: GetLanguage,
 	},
 	Endpoint{
-		Name:    "Patch Language",
+		Name:    files.APIPatchLanguage,
 		Method:  "PATCH",
-		Pattern: apiBase + languageBase + "{language}",
+		Pattern: files.APIBase + files.LanguageBase + "{language}",
 		Handler: PatchLanguage,
 	},
 }
