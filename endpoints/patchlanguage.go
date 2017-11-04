@@ -35,9 +35,9 @@ func PatchLanguage(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	if !files.IsValidToken(language, token) {
-		respond(writer, http.StatusForbidden, RegularResponse{
+		respond(writer, http.StatusUnauthorized, RegularResponse{
 			Success: false,
-			Message: "Access denied",
+			Message: "Unauthorized",
 		})
 		return
 	}
